@@ -4,7 +4,6 @@ import * as Util from '../../core/Util';
 import * as DomEvent from '../../dom/DomEvent';
 import * as DomUtil from '../../dom/DomUtil';
 
-
 /*
  * @class TileLayer
  * @inherits GridLayer
@@ -35,9 +34,7 @@ import * as DomUtil from '../../dom/DomUtil';
  * ```
  */
 
-
 export var TileLayer = GridLayer.extend({
-
 	// @section
 	// @aka TileLayer options
 	options: {
@@ -81,14 +78,12 @@ export var TileLayer = GridLayer.extend({
 	},
 
 	initialize: function (url, options) {
-
 		this._url = url;
 
 		options = Util.setOptions(this, options);
 
 		// detecting retina displays, adjusting tileSize and zoom levels
 		if (options.detectRetina && Browser.retina && options.maxZoom > 0) {
-
 			options.tileSize = Math.floor(options.tileSize / 2);
 
 			if (!options.zoomReverse) {
@@ -134,7 +129,8 @@ export var TileLayer = GridLayer.extend({
 		DomEvent.on(tile, 'error', Util.bind(this._tileOnError, this, done, tile));
 
 		if (this.options.crossOrigin || this.options.crossOrigin === '') {
-			tile.crossOrigin = this.options.crossOrigin === true ? '' : this.options.crossOrigin;
+			tile.crossOrigin =
+				this.options.crossOrigin === true ? '' : this.options.crossOrigin;
 		}
 
 		/*
@@ -149,7 +145,7 @@ export var TileLayer = GridLayer.extend({
 		*/
 		tile.setAttribute('role', 'presentation');
 
-		tile.src = this.getTileUrl(coords);
+		tile.src = this.getTileUrl(coords, this._url);
 
 		return tile;
 	},
@@ -160,7 +156,7 @@ export var TileLayer = GridLayer.extend({
 	// @method getTileUrl(coords: Object): String
 	// Called only internally, returns the URL for a tile given its coordinates.
 	// Classes extending `TileLayer` can override this function to provide custom tile URL naming schemes.
-	getTileUrl: function (coords) {
+	getTileUrl: function (coords, url) {
 		var data = {
 			r: Browser.retina ? '@2x' : '',
 			s: this._getSubdomain(coords),
@@ -176,7 +172,7 @@ export var TileLayer = GridLayer.extend({
 			data['-y'] = invertedY;
 		}
 
-		return Util.template(this._url, Util.extend(data, this.options));
+		return Util.template(url, Util.extend(data, this.options));
 	},
 
 	_tileOnLoad: function (done, tile) {
@@ -188,8 +184,8 @@ export var TileLayer = GridLayer.extend({
 		}
 	},
 
-	_tileOnError: function (done, tile, e) {
-		var errorUrl = this.options.errorTileUrl;
+	_tileOnError: function (done, tile, coords, e) {
+		var errorUrl = this.getTileUrl(coords, this.options.errorTileUrl);
 		if (errorUrl && tile.getAttribute('src') !== errorUrl) {
 			tile.src = errorUrl;
 		}
@@ -214,7 +210,8 @@ export var TileLayer = GridLayer.extend({
 	},
 
 	_getSubdomain: function (tilePoint) {
-		var index = Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
+		var index =
+			Math.abs(tilePoint.x + tilePoint.y) % this.options.subdomains.length;
 		return this.options.subdomains[index];
 	},
 
@@ -237,7 +234,6 @@ export var TileLayer = GridLayer.extend({
 		}
 	}
 });
-
 
 // @factory L.tilelayer(urlTemplate: String, options?: TileLayer options)
 // Instantiates a tile layer object given a `URL template` and optionally an options object.
