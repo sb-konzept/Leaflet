@@ -126,7 +126,11 @@ export var TileLayer = GridLayer.extend({
 		var tile = document.createElement('img');
 
 		DomEvent.on(tile, 'load', Util.bind(this._tileOnLoad, this, done, tile));
-		DomEvent.on(tile, 'error', Util.bind(this._tileOnError, this, done, tile));
+		DomEvent.on(
+			tile,
+			'error',
+			Util.bind(this._tileOnError, this, done, tile, coords)
+		);
 
 		if (this.options.crossOrigin || this.options.crossOrigin === '') {
 			tile.crossOrigin =
