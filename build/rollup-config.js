@@ -52,7 +52,5 @@ export default {
 		}
 	],
 	legacy: true, // Needed to create files loadable by IE8
-	plugins: [
-		release ? json() : rollupGitVersion()
-	]
+	plugins: [json()]
 };
